@@ -24,6 +24,7 @@
 // #endif
 
 static unsigned g_num_threads = std::thread::hardware_concurrency();
+using std::cout, std::endl;
 
 #define CACHE_LINE 64
 struct partial_sum_t {
@@ -43,7 +44,7 @@ unsigned speedtest(unsigned (*sum_funk)(const unsigned *, size_t ), const unsign
     auto t0 = omp_get_wtime();
     auto sum = sum_funk(V, n);
     auto t1 = omp_get_wtime();
-    std::cout << "sum=" << sum << "\t";
+    cout << std::hex << sum << std::dec << "\t";
 
     return (t1 - t0) * 1E+3;
 }
@@ -53,7 +54,8 @@ unsigned speedtest(unsigned (*sum_funk)(unsigned *, size_t ), unsigned *V, size_
     auto t0 = omp_get_wtime();
     auto sum = sum_funk(V, n);
     auto t1 = omp_get_wtime();
-    std::cout << "sum=" << sum << "\t";
+    cout << std::hex << sum << std::dec << "\t";
+
     return (t1 - t0) * 1E+3;
 }
 
@@ -70,23 +72,20 @@ unsigned simple_sum(const unsigned *V, size_t n){
 unsigned sum_with_omp_reduce(const unsigned *V, size_t n){
     unsigned sum = 0;
 
-    using std::cout, std::endl;
-    // cout << omp_get_num_threads() << endl;
     
     #pragma omp parallel for reduction (+ :sum)
+
     for (int i = 0; i < n; i++){
         sum += V[i];    
     }
     return sum;
 }
 
-
 unsigned sum_with_omp_round_robin(const unsigned *V, size_t n){
     
     unsigned sum = 0;
     unsigned* partial_sums;
     unsigned T;
-
 
     #pragma omp parallel
     {
@@ -217,9 +216,34 @@ unsigned sum_with_cpp_methons(const unsigned *V, size_t n){
     return sum;
 }
 
-// TODO - узнать, дописать
 unsigned sum_with_omp_mutex(const unsigned *V, size_t n){
-    return 0;
+    unsigned sum = 0;
+    
+    #pragma omp parallel
+    {
+        unsigned t = omp_get_thread_num();
+        unsigned T = omp_get_num_threads();
+        unsigned s_t = n / T, b_t = n % T;
+
+        if (t < b_t)
+            b_t = ++s_t * t;
+        else
+            b_t += s_t * t;
+
+        unsigned e_t = b_t + s_t;
+
+        unsigned my_sum = 0;
+
+        for (unsigned i = b_t; i < e_t; i++)
+            my_sum += V[i];
+        
+        #pragma omp critical
+        {
+            sum += my_sum;
+        }
+    }
+
+    return sum;
 }
 
 
@@ -280,8 +304,8 @@ unsigned sum_with_cpp_barrier(unsigned *V, size_t n){
         worker.join();
     }
 
-    for(auto i = 0; i < n; ++i)
-        std::cout << i << ": " << V[i] << std::endl;
+    // for(auto i = 0; i < n; ++i)
+    //     std::cout << i << ": " << V[i] << std::endl;
  
 
     return V[0];
