@@ -2,8 +2,7 @@
 #define prototypes
 #include <cstddef>
 #include <thread>
-#define N (1u << 4)
-
+#define N (1u << 27)
 
 
 // Метод 1 - Простой подсчёт суммы
