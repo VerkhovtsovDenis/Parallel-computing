@@ -1,6 +1,9 @@
 output: main.o prototype.o
-	g++ -std=c++20 main.o prototype.o -fopenmp -openmp -o output
+	g++ main.o prototype.o -std=c++20 -fopenmp -o output
+	rm -f *.o *.gch
+	./output.exe
+
 main.o: main.cpp
-	g++ -std=c++20 -c main.cpp -fopenmp -openmp
+	g++ -c main.cpp -std=c++20 -fopenmp
 prototype.o: prototype.cpp prototype.h
-	g++ -std=c++20 -c prototype.cpp prototype.h -openmp
+	g++ -c prototype.cpp prototype.h -std=c++20 -fopenmp
