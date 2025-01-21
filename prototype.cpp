@@ -44,7 +44,7 @@ unsigned speedtest(unsigned (*sum_funk)(const unsigned *, size_t ), const unsign
     auto t0 = omp_get_wtime();
     auto sum = sum_funk(V, n);
     auto t1 = omp_get_wtime();
-    cout << std::hex << sum << std::dec << "\t";
+    cout /*<< std::hex */<< sum << std::dec << "\t";
 
     return (t1 - t0) * 1E+3;
 }
@@ -54,7 +54,7 @@ unsigned speedtest(unsigned (*sum_funk)(unsigned *, size_t ), unsigned *V, size_
     auto t0 = omp_get_wtime();
     auto sum = sum_funk(V, n);
     auto t1 = omp_get_wtime();
-    cout << std::hex << sum << std::dec << "\t";
+    cout /*<< std::hex */<< sum << std::dec << "\t";
 
     return (t1 - t0) * 1E+3;
 }
@@ -271,44 +271,50 @@ public:
 };
 
 // FIXME -  ломается при 2^i, i >= get_num_threads 
-unsigned sum_with_cpp_barrier(unsigned *V, size_t n){
+unsigned sum_with_cpp_barrier(const unsigned *V, size_t n){
     
-    unsigned T = get_num_threads(); // Число потоков.
-    T = std::min(T, static_cast<unsigned>(n / 2)); // Ограничиваем потоки. В иделае - 1024 потока :_)
-    set_num_threads(T);
+    unsigned T = get_num_threads(); // Number of threads.
 
-    barrier sync_point(T); // Создаем барьер.
+    barrier sync_point(T); // Barrier for thread synchronization.
     std::vector<std::thread> workers(T - 1);
-    std::mutex mtx;
 
+    std::vector<unsigned> partial(T, 0);
 
-    auto worker_proc = [&sync_point, &mtx, &V, n, T](unsigned t) {
-        for (size_t step = 1; step < n; step *= 2) 
+    auto worker_proc = [&partial, &sync_point, T, n, V](size_t t) {
+        size_t s_t = n / T, b_t = n % T;
+
+        if (t < b_t)
+            b_t = ++s_t * t;
+        else
+            b_t += s_t * t;
+
+        unsigned e_t = b_t + s_t;
+
+        for (size_t i = b_t; i < e_t; ++i){
+            partial[t] += V[i];
+        }
+
+        for (size_t step = 1, next = 2; step < T; step = next, next += next)
         {
-            if (t % (step) == 0) {
-                size_t k = t * 2;
-                size_t m = k + step;
-                V[k] += V[m];
+            if (((t & (next - 1)) == 0 && t + step < T))
+            {
+                partial[t] += partial[t + step];
             }
             sync_point.arrive_and_wait();
-
         }
+
     };
 
-    for (size_t t = 1; t < T; ++t) {
+    for(size_t t = 1; t < T; ++t){
         workers[t - 1] = std::thread(worker_proc, t);
     }
+
     worker_proc(0);
 
-    for (auto& worker : workers) {
+    for (auto& worker : workers)
         worker.join();
-    }
-
-    // for(auto i = 0; i < n; ++i)
-    //     std::cout << i << ": " << V[i] << std::endl;
- 
-
-    return V[0];
+    
+    return partial[0];
 }
 
 
