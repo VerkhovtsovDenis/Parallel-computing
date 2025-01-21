@@ -32,10 +32,7 @@ unsigned sum_with_omp_mutex(const unsigned *V, size_t n);
 // Метод 9 - Подсчет суммы через методы C++ с использованием барьера (Параллельная редукция)
 unsigned sum_with_cpp_barrier(const unsigned *V, size_t n);
 
-unsigned get_num_threads();
-void set_num_threads(unsigned T);
 
 unsigned speedtest(unsigned sum_funk(const unsigned *, size_t), const unsigned *V, size_t n);
-unsigned speedtest(unsigned sum_funk(unsigned *, size_t), unsigned *V, size_t n);
 
 #endif

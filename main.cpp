@@ -3,7 +3,7 @@
 #include <memory>
 
 #include "prototype.h"
-
+#include "num_threads.h"
 
 
 int main(int argc, char** argv){

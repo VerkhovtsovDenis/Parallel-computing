@@ -8,6 +8,9 @@
 #include <vector>
 #include <condition_variable>
 
+#include "num_threads.h"
+
+
 #if defined (__GNUC__)&&__GNUC__<14
    #define hardware_destructive_interference_size 64
 #else
@@ -23,22 +26,9 @@
 //     concept sum_callable = std::is_invocable_r<unsigned, F, const unsigned*, size_t>;
 // #endif
 
-static unsigned g_num_threads = std::thread::hardware_concurrency();
 using std::cout, std::endl;
 
-#define CACHE_LINE 64
-struct partial_sum_t {
-    alignas(CACHE_LINE) unsigned val;
-};
 
-void set_num_threads(unsigned T) {
-    g_num_threads = T;
-    omp_set_num_threads(T);
-};
-
-unsigned get_num_threads() {
-    return g_num_threads;
-};
 
 unsigned speedtest(unsigned (*sum_funk)(const unsigned *, size_t ), const unsigned *V, size_t n){
     auto t0 = omp_get_wtime();
@@ -48,7 +38,6 @@ unsigned speedtest(unsigned (*sum_funk)(const unsigned *, size_t ), const unsign
 
     return (t1 - t0) * 1E+3;
 }
-
 
 unsigned speedtest(unsigned (*sum_funk)(unsigned *, size_t ), unsigned *V, size_t n){
     auto t0 = omp_get_wtime();
@@ -108,6 +97,12 @@ unsigned sum_with_omp_round_robin(const unsigned *V, size_t n){
     free(partial_sums);
     return sum;
 }
+
+#define CACHE_LINE 64
+struct partial_sum_t {
+    alignas(CACHE_LINE) unsigned val;
+};
+
 
 unsigned sum_with_aligned_omp_round_robin(const unsigned *V, size_t n){
     unsigned sum = 0;
