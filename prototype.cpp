@@ -278,9 +278,9 @@ unsigned sum_with_cpp_barrier(const unsigned *V, size_t n){
     barrier sync_point(T); // Barrier for thread synchronization.
     std::vector<std::thread> workers(T - 1);
 
-    std::vector<unsigned> partial(T, 0);
+    partial_sum_t* partial_sums = (partial_sum_t*)malloc(sizeof partial_sums[0] * T);
 
-    auto worker_proc = [&partial, &sync_point, T, n, V](size_t t) {
+    auto worker_proc = [&partial_sums, &sync_point, T, n, V](size_t t) {
         size_t s_t = n / T, b_t = n % T;
 
         if (t < b_t)
@@ -290,17 +290,19 @@ unsigned sum_with_cpp_barrier(const unsigned *V, size_t n){
 
         unsigned e_t = b_t + s_t;
 
-        for (size_t i = b_t; i < e_t; ++i){
-            partial[t] += V[i];
-        }
+        partial_sums[t].val = 0;
+        for (unsigned i = b_t; i < e_t; i++)
+            partial_sums[t].val += V[i];
 
-        for (size_t step = 1, next = 2; step < T; step = next, next += next)
+
+        for (size_t step = 1, next = 2; step < T; step = next, next <<= 1)
         {
-            if (((t & (next - 1)) == 0 && t + step < T))
-            {
-                partial[t] += partial[t + step];
-            }
+            // printf("%d: step = %d, next = %d\n", t, step, next);
+
             sync_point.arrive_and_wait();
+            if (((t & (next - 1)) == 0 && t + step < T)){
+                partial_sums[t].val += partial_sums[t + step].val;
+            }
         }
 
     };
@@ -313,8 +315,10 @@ unsigned sum_with_cpp_barrier(const unsigned *V, size_t n){
 
     for (auto& worker : workers)
         worker.join();
-    
-    return partial[0];
+
+    free(partial_sums);
+
+    return partial_sums[0].val;
 }
 
 
