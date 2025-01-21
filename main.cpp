@@ -25,7 +25,7 @@ int main(int argc, char** argv){
     cout << speedtest(sum_with_omp_and_thread, V.get(), N) << "\t" << "sum_with_omp_and_thread" << std::endl;
     cout << speedtest(sum_with_cpp_methons, V.get(), N) << "\t" << "sum_with_cpp_methons: " <<  std::endl;
     cout << speedtest(sum_with_omp_mutex, V.get(), N) << "\t" << "sum_with_omp_mutex: " << std::endl;
-    // cout << "sum_with_cpp_barrier: " << speedtest(sum_with_cpp_barrier, V.get(), N) << "\t" << std::endl;
+    cout << speedtest(sum_with_cpp_barrier, V.get(), N) << "\t" << "sum_with_cpp_barrier: "  << std::endl;
 
     return 0;
 }
