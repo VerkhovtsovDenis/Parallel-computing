@@ -6,6 +6,9 @@ output: main.o prototype.o num_threads.o
 main.o: main.cpp
 	g++ -c main.cpp -std=c++20 -fopenmp
 
+run_experements.o: run_experements.hpp
+	g++ -c run_experements.hpp -std=c++20
+
 num_threads.o: num_threads.cpp num_threads.h
 	g++ -c num_threads.cpp num_threads.h -std=c++20 -fopenmp
 
