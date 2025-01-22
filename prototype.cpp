@@ -7,7 +7,7 @@
 #include <type_traits>
 #include <vector>
 #include <condition_variable>
-
+#include <mutex> 
 #include "num_threads.h"
 
 
@@ -18,13 +18,6 @@
    using std::hardware_destructive_interference_size;
 #endif
 
-
-// #ifndef __cplusplus
-//     typedef unsigned (*sum_ptr) (const unsigned* v, size_t n);
-// #else 
-//     template <class F> //include type_traits
-//     concept sum_callable = std::is_invocable_r<unsigned, F, const unsigned*, size_t>;
-// #endif
 
 using std::cout, std::endl;
 
@@ -99,6 +92,7 @@ unsigned sum_with_omp_round_robin(const unsigned *V, size_t n){
 }
 
 #define CACHE_LINE 64
+
 struct partial_sum_t {
     alignas(CACHE_LINE) unsigned val;
 };
@@ -196,9 +190,10 @@ unsigned sum_with_cpp_methons(const unsigned *V, size_t n){
             my_sum += V[i];   
         }
 
-        mtx.lock();
+        // mtx.lock();
+        std::scoped_lock l{mtx};
         sum += my_sum;
-        mtx.unlock();
+        // mtx.unlock();
     };
 
     for(size_t t = 1; t < T; ++t)
@@ -265,7 +260,6 @@ public:
     }
 };
 
-// FIXME -  ломается при 2^i, i >= get_num_threads 
 unsigned sum_with_cpp_barrier(const unsigned *V, size_t n){
     
     unsigned T = get_num_threads(); // Number of threads.
