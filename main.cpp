@@ -4,10 +4,10 @@
 
 #include "prototype.h"
 #include "num_threads.h"
-
+#include "run_experements.hpp"
 
 int main(int argc, char** argv){
-    set_num_threads(4);
+    // set_num_threads(4);
 
     using std::cin, std::cout, std::endl;
     
@@ -17,6 +17,13 @@ int main(int argc, char** argv){
     for(auto i = 0; i < N; ++i)
         V[i] = i;
     
+
+    
+    auto table = run_experiment(simple_sum, N);
+
+    // for(auto a: table)
+    //     cout << table << endl;
+
     cout << speedtest(simple_sum, V.get(), N) << "\t" << "simple_sum" << std::endl;
     cout << speedtest(simple_sum_with_aligned, V.get(), N) << "\t" << "simple_sum_with_aligned" << std::endl;
     cout << speedtest(sum_with_omp_reduce, V.get(), N) << "\t" << "sum_with_omp_reduce"  << std::endl;
