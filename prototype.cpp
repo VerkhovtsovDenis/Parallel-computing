@@ -19,29 +19,6 @@
 #endif
 
 
-using std::cout, std::endl;
-
-
-
-unsigned speedtest(unsigned (*sum_funk)(const unsigned *, size_t ), const unsigned *V, size_t n){
-    auto t0 = omp_get_wtime();
-    auto sum = sum_funk(V, n);
-    auto t1 = omp_get_wtime();
-    cout /*<< std::hex */<< sum << std::dec << "\t";
-
-    return (t1 - t0) * 1E+3;
-}
-
-unsigned speedtest(unsigned (*sum_funk)(unsigned *, size_t ), unsigned *V, size_t n){
-    auto t0 = omp_get_wtime();
-    auto sum = sum_funk(V, n);
-    auto t1 = omp_get_wtime();
-    cout /*<< std::hex */<< sum << std::dec << "\t";
-
-    return (t1 - t0) * 1E+3;
-}
-
-
 unsigned simple_sum(const unsigned *V, size_t n){
     unsigned sum = 0;
     for (int i = 0; i < n; i++){
@@ -190,10 +167,8 @@ unsigned sum_with_cpp_methons(const unsigned *V, size_t n){
             my_sum += V[i];   
         }
 
-        // mtx.lock();
         std::scoped_lock l{mtx};
         sum += my_sum;
-        // mtx.unlock();
     };
 
     for(size_t t = 1; t < T; ++t)
