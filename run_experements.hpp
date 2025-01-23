@@ -7,8 +7,6 @@
     concept sum_callable = std::is_invocable_r<unsigned, F, const unsigned*, size_t>;
 #endif
 
-const char *p = "%s,%u,%f,%f,%f\n";
-
 struct table_row {
     unsigned T; bool match; double time, speedup, efficiency;
 };
@@ -23,6 +21,8 @@ std::vector<table_row> run_experiment(sum_ptr sum, const size_t n) {
     for (unsigned T = 1; T <= P; ++T) {
         set_num_threads(T);
         for (size_t i = 0; i < n; ++i) V[i] = i + T;
+
+        table[T-1].T = T;
         auto t1 = std::chrono::steady_clock::now();
         table[T-1].match = (sum(V.get(), n) == 0xFC000000 + T - 1);
         auto t2 = std::chrono::steady_clock::now();
@@ -34,8 +34,8 @@ std::vector<table_row> run_experiment(sum_ptr sum, const size_t n) {
     return table;
 };
 
-
-std::vector<std::pair<const char *, sum_ptr>> funcs {
+const char *p = "%u,%lf,%f,%f,%f\n";
+std::vector<std::pair<const char *, sum_ptr>> functions {
         {"simple_sum", simple_sum},
         {"simple_sum_with_aligned", simple_sum_with_aligned},
         {"sum_with_omp_reduce", sum_with_omp_reduce},

@@ -11,28 +11,25 @@ int main(int argc, char** argv){
 
     using std::cin, std::cout, std::endl;
     
-    cout << "N = " << N << endl;
+    // cout << "N = " << N << endl;
 
-    auto V = std::make_unique<unsigned[]>(N);
-    for(auto i = 0; i < N; ++i)
-        V[i] = i;
+    // auto V = std::make_unique<unsigned[]>(N);
+    // for(auto i = 0; i < N; ++i)
+    //     V[i] = i;
     
+    for (auto &funk : functions){
+        auto filename = ("output//" + std::string(funk.first) + std::string(".csv")).c_str(); 
+        auto file = fopen(filename, "w");
+        fprintf(file, "Thread,match,time,speedup,efficiency\n");
 
-    
-    auto table = run_experiment(simple_sum, N);
+        auto result = run_experiment(funk.second, N);
+        
+        for (auto &item : result){
+            fprintf(file, p, item.T, item.match, item.time, item.speedup, item.efficiency);
+        }
+        cout << funk.first << " is end \n";
 
-    // for(auto a: table)
-    //     cout << table << endl;
-
-    cout << speedtest(simple_sum, V.get(), N) << "\t" << "simple_sum" << std::endl;
-    cout << speedtest(simple_sum_with_aligned, V.get(), N) << "\t" << "simple_sum_with_aligned" << std::endl;
-    cout << speedtest(sum_with_omp_reduce, V.get(), N) << "\t" << "sum_with_omp_reduce"  << std::endl;
-    cout << speedtest(sum_with_omp_round_robin, V.get(), N) << "\t" << "sum_with_omp_round_robin" << std::endl;
-    cout << speedtest(sum_with_aligned_omp_round_robin, V.get(), N) << "\t" <<"sum_with_aligned_omp_round_robin" << std::endl;
-    cout << speedtest(sum_with_omp_and_thread, V.get(), N) << "\t" << "sum_with_omp_and_thread" << std::endl;
-    cout << speedtest(sum_with_cpp_methons, V.get(), N) << "\t" << "sum_with_cpp_methons: " <<  std::endl;
-    cout << speedtest(sum_with_omp_mutex, V.get(), N) << "\t" << "sum_with_omp_mutex: " << std::endl;
-    cout << speedtest(sum_with_cpp_barrier, V.get(), N) << "\t" << "sum_with_cpp_barrier: "  << std::endl;
-
+    }
     return 0;
+
 }
