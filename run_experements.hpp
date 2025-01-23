@@ -36,13 +36,13 @@ std::vector<table_row> run_experiment(sum_ptr sum, const size_t n) {
 
 const char *p = "%u,%d,%f,%f,%f\n";
 std::vector<std::pair<const char *, sum_ptr>> functions {
-        {"simple_sum", simple_sum},
-        {"simple_sum_with_aligned", simple_sum_with_aligned},
-        {"sum_with_omp_reduce", sum_with_omp_reduce},
-        {"sum_with_omp_round_robin", sum_with_omp_round_robin},
-        {"sum_with_aligned_omp_round_robin", sum_with_aligned_omp_round_robin},
-        {"sum_with_omp_and_thread", sum_with_omp_and_thread},
-        {"sum_with_cpp_methons", sum_with_cpp_methons},
-        {"sum_with_omp_mutex", sum_with_omp_mutex},
-        {"sum_with_cpp_barrier", sum_with_cpp_barrier}
+        {"1. simple_sum", simple_sum},
+        {"2. simple_sum_with_aligned", simple_sum_with_aligned},
+        {"3. sum_with_omp_reduce", sum_with_omp_reduce},
+        {"4. sum_with_omp_round_robin", sum_with_omp_round_robin},
+        {"5. sum_with_aligned_omp_round_robin", sum_with_aligned_omp_round_robin},
+        {"6. sum_with_omp_and_thread", sum_with_omp_and_thread},
+        {"7. sum_with_cpp_methons", sum_with_cpp_methons},
+        {"8. sum_with_omp_mutex", sum_with_omp_mutex},
+        {"9. sum_with_cpp_barrier", sum_with_cpp_barrier}
     };
