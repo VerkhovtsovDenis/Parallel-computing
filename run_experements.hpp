@@ -34,7 +34,7 @@ std::vector<table_row> run_experiment(sum_ptr sum, const size_t n) {
     return table;
 };
 
-const char *p = "%u,%lf,%f,%f,%f\n";
+const char *p = "%u,%d,%f,%f,%f\n";
 std::vector<std::pair<const char *, sum_ptr>> functions {
         {"simple_sum", simple_sum},
         {"simple_sum_with_aligned", simple_sum_with_aligned},
