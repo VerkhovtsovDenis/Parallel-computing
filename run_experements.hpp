@@ -15,7 +15,6 @@ std::vector<table_row> run_experiment(sum_ptr sum, const size_t n) {
 
     unsigned P = get_num_threads();
     std::vector<table_row> table(P);
-
     auto V = std::make_unique<unsigned[]>(n);
 
     for (unsigned T = 1; T <= P; ++T) {
