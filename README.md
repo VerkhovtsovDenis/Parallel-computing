@@ -1,8 +1,9 @@
 # Установка и запуск
 
-0. Клонировать репозиторий:
+0. Клонировать репозиторий и перейти в нужную ветку:
 ```bash
 git clone https://github.com/VerkhovtsovDenis/Parallel-computing
+git branch -b randomize
 ```
 1. Скачать и установить msys64 (https://www.msys2.org/)
 2. На ucrt64 установить C++ и make:

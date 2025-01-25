@@ -11,12 +11,12 @@ int main(int argc, char** argv){
     for (auto &funk : functions){
         auto filename = ("output//" + std::string(funk.first) + std::string(".csv")).c_str(); 
         auto file = fopen(filename, "w");
-        fprintf(file, "Thread,match,time,speedup,efficiency\n");
+        fprintf(file, "Thread,time,speedup\n");
 
         auto result = run_experiment(funk.second, N);
         
         for (auto &item : result){
-            fprintf(file, p, item.T, item.match, item.time, item.speedup, item.efficiency);
+            fprintf(file, p, item.T, item.time, item.speedup);
         }
         std::cout << funk.first << " is end \n";
 
