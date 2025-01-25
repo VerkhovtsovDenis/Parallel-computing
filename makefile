@@ -1,8 +1,8 @@
 output: main.o prototype.o num_threads.o
-	g++ main.o prototype.o num_threads.o -std=c++20 -fopenmp -o output
+	g++ main.o prototype.o num_threads.o -std=c++20 -fopenmp -o outputfile
 	rm -rf *.o *.gch ./output
 	mkdir output
-	./output.exe
+	./outputfile
 	
 
 main.o: main.cpp

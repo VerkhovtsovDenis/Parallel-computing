@@ -9,8 +9,8 @@
 int main(int argc, char** argv){
     
     for (auto &funk : functions){
-        auto filename = ("output//" + std::string(funk.first) + std::string(".csv")).c_str(); 
-        auto file = fopen(filename, "w");
+        auto filename = "output/" + std::string(funk.first) + ".csv"; 
+        auto file = fopen(filename.c_str(), "w");
         fprintf(file, "Thread,time,speedup\n");
 
         auto result = run_experiment(funk.second, N);
@@ -18,6 +18,7 @@ int main(int argc, char** argv){
         for (auto &item : result){
             fprintf(file, p, item.T, item.time, item.speedup);
         }
+	fclose(file);
         std::cout << funk.first << " is end \n";
 
     }
